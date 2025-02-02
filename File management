@@ -1,0 +1,162 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+using namespace std;
+
+
+void createFile() {
+    string filename;
+    cout << "Enter the filename: ";
+    cin >> filename;
+    ofstream file(filename.c_str());
+    if (file.is_open()) {
+        cout << "File created successfully!" << endl;
+        file.close();
+    } else {
+        cout << "Unable to create file!" << endl;
+    }
+}
+
+
+void deleteFile() {
+    string filename;
+    cout << "Enter the filename: ";
+    cin >> filename;
+    if (remove(filename.c_str()) == 0) {
+        cout << "File deleted successfully!" << endl;
+    } else {
+        cout << "Unable to delete file!" << endl;
+    }
+}
+
+
+void readFile() {
+    string filename;
+    cout << "Enter the filename: ";
+    cin >> filename;
+    ifstream file(filename.c_str());
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+            cout << line << endl;
+        }
+        file.close();
+    } else {
+        cout << "Unable to open file!" << endl;
+    }
+}
+
+void writeFile() {
+    string filename;
+    cout << "Enter the filename: ";
+    cin >> filename;
+    ofstream file(filename.c_str(), ios::app);
+    if (file.is_open()) {
+        string line;
+        cout << "Enter the text to write to the file: ";
+        cin.ignore();
+        getline(cin, line);
+        file << line << endl;
+        file.close();
+        cout << "Text written to file successfully!" << endl;
+    } else {
+        cout << "Unable to open file!" << endl;
+    }
+}
+
+
+void searchFile() {
+    string filename;
+    cout << "Enter the filename: ";
+    cin >> filename;
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(".")) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            if (ent->d_name == filename) {
+                cout << "File found!" << endl;
+                closedir(dir);
+                return;
+            }
+        }
+        closedir(dir);
+    }
+    cout << "File not found!" << endl;
+}
+
+
+void listFiles() {
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir(".")) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            cout << ent->d_name << endl;
+        }
+        closedir(dir);
+    } else {
+        cout << "Unable to open directory!" << endl;
+    }
+}
+
+
+void copyFile() {
+    string source, destination;
+    cout << "Enter the source filename: ";
+    cin >> source;
+    cout << "Enter the destination filename: ";
+    cin >> destination;
+    ifstream src(source.c_str());
+    ofstream dest(destination.c_str());
+    if (src.is_open() && dest.is_open()) {
+        string line;
+        while (getline(src, line)) {
+            dest << line << endl;
+        }
+        src.close();
+        dest.close();
+        cout << "File copied successfully!" << endl;
+    } else {
+        cout << "Unable to copy file!" << endl;
+    }
+}
+
+
+void moveFile() {
+    string source, destination;
+    cout << "Enter the source filename: ";
+    cin >> source;
+    cout << "Enter the destination filename: ";
+    cin >> destination;
+    if (rename(source.c_str(), destination.c_str()) == 0) {
+        cout << "File moved successfully!" << endl;
+    } else {
+        cout << "Unable to move file!" << endl;
+    }
+}
+
+void renameFile() {
+    string oldName, newName;
+    cout << "Enter the old filename: ";
+    cin >> oldName;
+    cout << "Enter the new filename: ";
+    cin >> newName;
+    if (rename(oldName.c_str(), newName.c_str()) == 0) {
+        cout << "File renamed successfully!" << endl;
+    } else {
+        cout << "Unable to rename file!" << endl;
+    }
+}
+
+int main() {
+    int choice;
+    do {
+        cout << "File Management Tool" << endl;
+        cout << "1. Create a new file" << endl;
+        cout << "2. Delete a file" << endl;
+        cout << "3. Read a file" << endl;
+        cout << "4. Write to a file" << endl
